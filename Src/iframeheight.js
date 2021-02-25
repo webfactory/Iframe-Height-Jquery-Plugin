@@ -286,6 +286,8 @@ Details: http://github.com/Sly777/Iframe-Height-Jquery-Plugin
                 }, base.options.watcherTime);
             }
 
+            uuid++;
+
             return true;
         };
 
