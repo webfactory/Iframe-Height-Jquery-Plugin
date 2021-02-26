@@ -169,7 +169,7 @@ Details: http://github.com/Sly777/Iframe-Height-Jquery-Plugin
 
              
             if (!base.$el.id) {
-                base.$el.id = "iframe-id-" + (++uuid);
+                base.$el.id = "iframe-id-" + uuid;
             }
             var frame = document.getElementById(base.$el.attr("id"));
 
