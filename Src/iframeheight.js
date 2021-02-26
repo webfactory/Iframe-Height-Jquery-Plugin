@@ -1,8 +1,9 @@
 /*
 Jquery Iframe Auto Height Plugin
-Version 1.2.5 (09.10.2013)
+Version 2.0.0 (26.02.2021)
 
 Author : Ilker Guller (http://ilkerguller.com)
+Contributor : webfactory GmbH (https://www.webfactory.de)
 
 Description: This plugin can get contents of iframe and set height of iframe automatically. Also it has cross-domain fix (*).
 Details: http://github.com/Sly777/Iframe-Height-Jquery-Plugin
@@ -138,6 +139,8 @@ Details: http://github.com/Sly777/Iframe-Height-Jquery-Plugin
             if(typeof event.data == "string") {
                 if(event.data == "reset") {
                     base.$el.css("height","").removeAttr("height");
+
+                // backwards compatibility for cross-domain origins that use v1.x where postmessage is a string
                 } else {
                     if(!/^ifh*/.test(event.data)) return false;
 
@@ -146,6 +149,22 @@ Details: http://github.com/Sly777/Iframe-Height-Jquery-Plugin
 
                     base.resetIframe();
                     base.setIframeHeight(frameHeightPx);
+                }
+
+            // change in v2: cross-domain postmessage contains a data object, not a string
+            } else if(typeof event.data == "object") {
+                if(typeof event.data.height == "string" && typeof event.data.origin == "string") {
+                    if(!/^ifh*/.test(event.data.height)) return false;
+
+                    if(typeof parseInt(event.data.height.substring(3)) != "number") return false;
+                    var frameHeightPx = parseInt(event.data.height.substring(3)) + parseInt(base.options.heightOffset);
+
+                    if(event.data.origin === base.$el.attr('src')) {
+                        base.resetIframe();
+                        base.setIframeHeight(frameHeightPx);
+                    }
+                } else {
+                    return false;
                 }
             } else {
                 return false;
@@ -333,7 +352,10 @@ Details: http://github.com/Sly777/Iframe-Height-Jquery-Plugin
             }
 
             if (event.data == iframeOptions.onMessageFunctionName) {
-                var message = "ifh" + $(document).height();
+                var message = {
+                    height: "ifh" +$(document).height(),
+                    origin: window.location.toString()
+                };
                 event.source.postMessage(message, event.origin);
             }
         }
@@ -343,7 +365,10 @@ Details: http://github.com/Sly777/Iframe-Height-Jquery-Plugin
                 this.reset();
                 window.__domainname = iframeOptions.domainName;
                 setTimeout(function(){
-                    var message = "ifh" + $(document).height();
+                    var message = {
+                        height: "ifh" +$(document).height(),
+                        origin: window.location.toString()
+                    };
                     parent.postMessage(message, window.__domainname);
                 }, 90);
             },
