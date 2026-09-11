@@ -1,6 +1,8 @@
 Iframe Height Jquery Plugin [![](http://api.libscore.com/badge/$.fn.iframeHeight.svg)](http://libscore.com#$.fn.iframeHeight)
 =============
-(Version 1.2.5) - 09.10.2013
+(Version 2.0.0) - 26.02.2021
+
+This is a [webfactory](https://github.com/webfactory) fork of [Ilker Guller's Iframe-Height-Jquery-Plugin](https://github.com/Sly777/Iframe-Height-Jquery-Plugin). We use it in our own projects and maintain it here because upstream did not fix a bug affecting pages with multiple iframes (see Changelog below).
 
 This plugin can get contents of iframe and set height of iframe automatically. Also it has cross-domain fix (* You should read tutorial below).
 
@@ -124,6 +126,12 @@ You can see files inside of __Demos__ Folder.
 ## Change Log
 
 ----------------------------------
+
+Version 2.0.0 (26.02.2021) :
+> - Fixed height updates for pages with multiple iframes from the same domain (previously, all iframes received the height of the iframe that was resized last)
+> - Made the generated uuid truly unique per iframe
+> - Updated event listeners to jQuery 3.x's .on()
+> - **Breaking change for Cross-Domain setups:** the postMessage payload sent by `$.iframeHeightExternal()` is now an object (`{height, origin}`) instead of a plain string, and it is only applied if `origin` exactly matches the iframe's `src` attribute. Update both the host page and the embedded page together, and make sure the iframe's `src` matches `window.location` on the embedded page exactly (scheme, trailing slash, absolute vs. relative), otherwise the height silently stops updating.
 
 Version 1.2.5 (09.10.2013) :
 > - Fixed IE8 postMessage issue (Thanks to [Lincetto](https://github.com/lincetto "https://github.com/lincetto"))
